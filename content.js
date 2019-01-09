@@ -1,121 +1,66 @@
+function classToString(c) {
+  console.log(c);
+  return "" + c.name + ": " + (c.gpa * c.weight) + "\n";
+}
+
+function getClassGPA(g) {
+  switch (true) {
+    case (g <= 59):
+      return 0;
+    case (g <= 62):
+      return .67;
+    case (g <= 66):
+      return 1;
+    case (g <= 69):
+      return 1.33;
+    case (g <= 72):
+      return 1.67;
+    case (g <= 76):
+      return 2;
+    case (g <= 79):
+      return 2.33;
+    case (g <= 82):
+      return 2.67;
+    case (g <= 86):
+      return 3;
+    case (g <= 89):
+      return 3.33;
+    case (g <= 92):
+      return 3.67;
+    case (g <= 96):
+      return 4;
+    case (true):
+      return 4.33;
+  }
+}
 if (window.location.href.includes('parents.chatham-nj.org/genesis/parents?tab1=studentdata&tab2=gradebook')) {
-  var classesOdd = document.getElementsByClassName('listrowodd');
-  var classesEven = document.getElementsByClassName('listroweven');
-  var classes = [];
-  for (i of classesEven) {
-    classes.push(i);
-  }
-  for (i of classesOdd) {
-    classes.push(i);
-  }
-
-  var classText = [];
-  for (var i = 0; i < classes.length; i++) {
-    classText.push(classes[i].innerText);
-  }
-
-  var classInfo = [];
-  for (var i = 0; i < classes.length; i++) {
-    classInfo.push(classText[i].split(/\n+/));
-  }
-
-  var grade = [];
-  var weight = [];
-  for (var i = 0; i < classes.length; i++) {
-    if (classInfo[i][2] != 'No Grades' && !classInfo[i][0].includes('Phys Ed')) {
-      if (classInfo[i][0].includes('AP') || classInfo[i][0].includes('Honors')) {
-        weight.push(1.25);
-      } else {
-        weight.push(1);
-      }
-      grade.push(classInfo[i][2].substring(0, 5));
+  console.log('running')
+  let classes = [];
+  let data = document.querySelectorAll('body > table.notecard > tbody > tr:nth-child(2) > td > table > tbody > tr:not(:first-child)');
+  for (let i = 0; i < data.length; i++) {
+    console.log("running");
+    let info = data[i].innerText.split(/\n+/);
+    if (info[2] != 'No Grades' && !info[0].includes('Phys Ed')) {
+      classes.push({
+        name: info[0],
+        gpa: getClassGPA(Math.round(info[2].split('%')[0])),
+        weight: info[0].includes('AP') || info[0].includes('Honors') ? 1.25 : 1
+      });
     }
   }
-
-  var weightedClassGPA = [];
-  for (var i = 0; i < grade.length; i++) {
-    g = grade[i];
-    g = Math.round(g);
-    switch (true) {
-      case (g <= 59):
-        {
-          weightedClassGPA[i] = 0;
-          break;
-        }
-      case (g <= 62):
-        {
-          weightedClassGPA[i] = .67;
-          break;
-        }
-      case (g <= 66):
-        {
-          weightedClassGPA[i] = 1;
-          break;
-        }
-      case (g <= 69):
-        {
-          weightedClassGPA[i] = 1.33;
-          break;
-        }
-      case (g <= 72):
-        {
-          weightedClassGPA[i] = 1.67;
-          break;
-        }
-      case (g <= 76):
-        {
-          weightedClassGPA[i] = 2;
-          break;
-        }
-      case (g <= 79):
-        {
-          weightedClassGPA[i] = 2.33;
-          break;
-        }
-      case (g <= 82):
-        {
-          weightedClassGPA[i] = 2.67;
-          break;
-        }
-      case (g <= 86):
-        {
-          weightedClassGPA[i] = 3;
-          break;
-        }
-      case (g <= 89):
-        {
-          weightedClassGPA[i] = 3.33;
-          break;
-        }
-      case (g <= 92):
-        {
-          weightedClassGPA[i] = 3.67;
-          break;
-        }
-      case (g <= 96):
-        {
-          weightedClassGPA[i] = 4;
-          break;
-        }
-      case (true):
-        {
-          weightedClassGPA[i] = 4.33;
-          break;
-        }
-    }
-    weightedClassGPA[i]*=weight[i];
+  let unweighted = 0;
+  let weighted = 0;
+  let result = "";
+  for (let c of classes) {
+    console.log('running')
+    unweighted += c.gpa;
+    weighted += c.gpa * c.weight;
+    result += classToString(c);
   }
-
-  var gpa = 0;
-  for (w of weightedClassGPA) {
-    gpa += w;
-  }
-  if (grade.length != 0) {
-    gpa /= grade.length;
-    alert('Your GPA is ' + (Math.round(gpa * 100) / 100));
-  } else {
-    alert('No Grades');
-  }
+  unweighted /= classes.length;
+  weighted /= classes.length;
+  result += "Weighted: " + weighted + "\nUnweighted: " + unweighted;
+  alert(result);
 } else {
   window.location.replace('https://parents.chatham-nj.org');
 }
