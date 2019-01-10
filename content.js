@@ -54,7 +54,7 @@ if (window.location.href.includes('parents.chatham-nj.org/genesis/parents?tab1=s
   unweighted /= classes.length;
   weighted /= classes.length;
   result = "Weighted: " + numFormat(weighted) + "\nUnweighted: " + numFormat(unweighted) + result;
-  alert(result);
+  alert('hello');
 } else {
   window.location.replace('https://parents.chatham-nj.org');
 }
